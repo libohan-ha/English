@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="story-container">
+    <div class="story-content">
+        {{ story.content|safe }}
+    </div>
+    <div class="word-list">
+        <h3>单词解释：</h3>
+        {{ story.definitions|safe }}
+    </div>
+    <div class="story-navigation">
+        {% if prev_story %}
+        <a href="{{ url_for('story', story_id=prev_story.id) }}" class="nav-link prev-link">
+            <span class="nav-arrow">←</span> 上一篇
+        </a>
+        {% endif %}
+        
+        <a href="/" class="back-link">返回首页</a>
+        
+        {% if next_story %}
+        <a href="{{ url_for('story', story_id=next_story.id) }}" class="nav-link next-link">
+            下一篇 <span class="nav-arrow">→</span>
+        </a>
+        {% endif %}
+    </div>
+</div>
+{% endblock %} 

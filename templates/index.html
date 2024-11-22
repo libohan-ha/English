@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="stories-grid">
+    {% for story in stories %}
+    <a href="{{ url_for('story', story_id=story.id) }}" class="story-card">
+        <div class="story-number">Story {{ story.id }}</div>
+        <div class="story-preview">{{ story.preview }}...</div>
+    </a>
+    {% endfor %}
+</div>
+
+{% if total_pages > 1 %}
+<div class="pagination">
+    {% if current_page > 1 %}
+    <a href="{{ url_for('index', page=current_page-1, q=search_query) }}" class="page-link">上一页</a>
+    {% endif %}
+    
+    {% for page in range(1, total_pages + 1) %}
+        {% if page == current_page %}
+        <span class="page-link active">{{ page }}</span>
+        {% else %}
+        <a href="{{ url_for('index', page=page, q=search_query) }}" class="page-link">{{ page }}</a>
+        {% endif %}
+    {% endfor %}
+    
+    {% if current_page < total_pages %}
+    <a href="{{ url_for('index', page=current_page+1, q=search_query) }}" class="page-link">下一页</a>
+    {% endif %}
+</div>
+{% endif %}
+{% endblock %} 
