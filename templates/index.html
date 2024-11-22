@@ -16,11 +16,19 @@
     <a href="{{ url_for('index', page=current_page-1, q=search_query) }}" class="page-link">上一页</a>
     {% endif %}
     
+    {% set window_size = 2 %}
     {% for page in range(1, total_pages + 1) %}
-        {% if page == current_page %}
-        <span class="page-link active">{{ page }}</span>
-        {% else %}
-        <a href="{{ url_for('index', page=page, q=search_query) }}" class="page-link">{{ page }}</a>
+        {% if page == 1 
+           or page == total_pages 
+           or (page >= current_page - window_size and page <= current_page + window_size) 
+        %}
+            {% if page == current_page %}
+            <span class="page-link active">{{ page }}</span>
+            {% else %}
+            <a href="{{ url_for('index', page=page, q=search_query) }}" class="page-link">{{ page }}</a>
+            {% endif %}
+        {% elif page == current_page - window_size - 1 or page == current_page + window_size + 1 %}
+            <span class="page-ellipsis">...</span>
         {% endif %}
     {% endfor %}
     

@@ -105,8 +105,11 @@ main {
 .pagination {
     display: flex;
     justify-content: center;
+    align-items: center;
+    flex-wrap: wrap;
     gap: 0.5rem;
     margin-top: 2rem;
+    padding: 1rem;
 }
 
 .page-link {
@@ -116,6 +119,9 @@ main {
     border-radius: 4px;
     color: var(--text-color);
     text-decoration: none;
+    min-width: 40px;
+    text-align: center;
+    font-size: 0.9rem;
 }
 
 .page-link.active {
@@ -242,4 +248,21 @@ footer {
 
 .back-link {
     padding: 0.5rem 1.5rem;
+}
+
+.page-ellipsis {
+    padding: 0.5rem;
+    color: var(--text-color);
+}
+
+@media (max-width: 768px) {
+    .pagination {
+        gap: 0.25rem;
+    }
+    
+    .page-link {
+        padding: 0.4rem 0.8rem;
+        min-width: 35px;
+        font-size: 0.85rem;
+    }
 } 
