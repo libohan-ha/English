@@ -2,13 +2,40 @@
 
 {% block content %}
 <div class="story-container">
+    <div class="story-controls">
+        <button id="playButton" class="control-button">
+            <span class="play-icon">▶</span> 朗读文章
+        </button>
+        <button id="pauseButton" class="control-button" style="display: none;">
+            <span class="pause-icon">⏸</span> 暂停朗读
+        </button>
+        <button id="stopButton" class="control-button" style="display: none;">
+            <span class="stop-icon">⏹</span> 停止朗读
+        </button>
+    </div>
+
     <div class="story-content">
         {{ story.content|safe }}
     </div>
+    
     <div class="word-list">
         <h3>单词解释：</h3>
-        {{ story.definitions|safe }}
+        <ul class="word-definitions">
+        {% for word in story.words %}
+            <li class="word-item">
+                <div class="word-header">
+                    <span class="word">{{ word.word }}</span>
+                    <span class="phonetic" id="phonetic-{{ word.word }}"></span>
+                    <button class="word-speaker" onclick="speakWord('{{ word.word }}')">
+                        <span class="speaker-icon">🔊</span>
+                    </button>
+                </div>
+                <div class="word-meaning">{{ word.definition }}</div>
+            </li>
+        {% endfor %}
+        </ul>
     </div>
+    
     <div class="story-navigation">
         {% if prev_story %}
         <a href="{{ url_for('story', story_id=prev_story.id) }}" class="nav-link prev-link">
@@ -25,4 +52,91 @@
         {% endif %}
     </div>
 </div>
+
+<script>
+let speechUtterance = null;
+const synth = window.speechSynthesis;
+
+// 文章朗读功能
+function setupSpeech() {
+    const playButton = document.getElementById('playButton');
+    const pauseButton = document.getElementById('pauseButton');
+    const stopButton = document.getElementById('stopButton');
+    const content = document.querySelector('.story-content').textContent;
+
+    playButton.addEventListener('click', () => {
+        if (speechUtterance === null) {
+            speechUtterance = new SpeechSynthesisUtterance(content);
+            speechUtterance.lang = 'en-US';
+            speechUtterance.rate = 0.9;
+            speechUtterance.pitch = 1;
+            
+            speechUtterance.onend = () => {
+                playButton.style.display = 'inline-block';
+                pauseButton.style.display = 'none';
+                stopButton.style.display = 'none';
+                speechUtterance = null;
+            };
+        }
+        
+        synth.speak(speechUtterance);
+        playButton.style.display = 'none';
+        pauseButton.style.display = 'inline-block';
+        stopButton.style.display = 'inline-block';
+    });
+
+    pauseButton.addEventListener('click', () => {
+        if (synth.speaking) {
+            if (synth.paused) {
+                synth.resume();
+                pauseButton.innerHTML = '<span class="pause-icon">⏸</span> 暂停朗读';
+            } else {
+                synth.pause();
+                pauseButton.innerHTML = '<span class="play-icon">▶</span> 继续朗读';
+            }
+        }
+    });
+
+    stopButton.addEventListener('click', () => {
+        synth.cancel();
+        playButton.style.display = 'inline-block';
+        pauseButton.style.display = 'none';
+        stopButton.style.display = 'none';
+        speechUtterance = null;
+    });
+}
+
+// 单词朗读功能
+function speakWord(word) {
+    synth.cancel(); // 停止当前朗读
+    const utterance = new SpeechSynthesisUtterance(word);
+    utterance.lang = 'en-US';
+    utterance.rate = 0.8;
+    synth.speak(utterance);
+}
+
+// 获取单词音标
+async function fetchPhonetic(word) {
+    try {
+        const response = await fetch(`https://api.dictionaryapi.dev/api/v2/entries/en/${word}`);
+        const data = await response.json();
+        if (data && data[0] && data[0].phonetic) {
+            const phoneticSpan = document.getElementById(`phonetic-${word}`);
+            phoneticSpan.textContent = data[0].phonetic;
+        }
+    } catch (error) {
+        console.error('Error fetching phonetic:', error);
+    }
+}
+
+// 为所有单词获取音标
+document.addEventListener('DOMContentLoaded', () => {
+    setupSpeech();
+    const words = document.querySelectorAll('.word');
+    words.forEach(wordElement => {
+        const word = wordElement.textContent.trim();
+        fetchPhonetic(word);
+    });
+});
+</script>
 {% endblock %} 

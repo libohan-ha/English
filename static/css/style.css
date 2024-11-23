@@ -265,4 +265,90 @@ footer {
         min-width: 35px;
         font-size: 0.85rem;
     }
+}
+
+/* 朗读控制按钮样式 */
+.story-controls {
+    margin-bottom: 1rem;
+    padding: 1rem;
+    background: var(--card-background);
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.control-button {
+    padding: 0.5rem 1rem;
+    margin-right: 0.5rem;
+    background: var(--primary-color);
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    transition: background-color 0.3s;
+}
+
+.control-button:hover {
+    background-color: #357abd;
+}
+
+.play-icon, .pause-icon, .stop-icon {
+    font-size: 1.2rem;
+    line-height: 1;
+}
+
+/* 禁用状态 */
+.control-button:disabled {
+    background-color: #ccc;
+    cursor: not-allowed;
+}
+
+/* 单词项样式 */
+.word-item {
+    padding: 1rem;
+    margin-bottom: 1rem;
+    background: var(--card-background);
+    border-radius: 8px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+
+.word-header {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 0.5rem;
+}
+
+.word-speaker {
+    background: none;
+    border: none;
+    color: var(--primary-color);
+    cursor: pointer;
+    padding: 0.2rem;
+    border-radius: 50%;
+    transition: all 0.3s ease;
+}
+
+.word-speaker:hover {
+    background: var(--primary-color);
+    color: white;
+}
+
+.speaker-icon {
+    font-size: 1.2rem;
+    line-height: 1;
+}
+
+.phonetic {
+    color: #666;
+    font-family: Arial, sans-serif;
+    font-size: 0.9rem;
+}
+
+.word-meaning {
+    color: var(--text-color);
+    line-height: 1.6;
+    margin-top: 0.5rem;
 } 

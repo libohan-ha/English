@@ -46,7 +46,19 @@ def process_content(content):
             formatted_definitions += f'<li><span class="word">{word}</span>：{definition.strip()}</li>'
     formatted_definitions += '</ul>'
     
-    return story_text, formatted_definitions
+    # 处理单词数据
+    words = []
+    for line in definitions.split('\n'):
+        if line.strip() and '：' in line:
+            word = line.split('：')[0].strip()
+            word = re.sub(r'^\d+\.\s*', '', word)  # 移除序号
+            definition = line.split('：', 1)[1].strip()
+            words.append({
+                'word': word,
+                'definition': definition
+            })
+    
+    return story_text, formatted_definitions, words
 
 def get_all_stories():
     cache_key = 'all_stories'
@@ -63,7 +75,7 @@ def get_all_stories():
     for file in story_files:
         with open(file, 'r', encoding='utf-8') as f:
             content = f.read()
-            story_text, definitions = process_content(content)
+            story_text, definitions, words = process_content(content)
             story_id = int(os.path.basename(file).split('_')[1].split('.')[0])
             
             stories.append({
@@ -71,6 +83,7 @@ def get_all_stories():
                 'content': story_text,
                 'definitions': definitions,
                 'preview': re.sub(r'<[^>]+>', '', story_text)[:200],
+                'words': words  # 添加单词列表
             })
     
     cache.set(cache_key, stories, timeout=CACHE_TIMEOUT)
